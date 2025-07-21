@@ -1,0 +1,17 @@
+[project]
+name = "pyrecover"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "jovaras.z", email = "jovaras.z@8devices.com" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+pyrecover = "pyrecover:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
