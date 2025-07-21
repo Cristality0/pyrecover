@@ -1,8 +1,5 @@
 import base64
-import getpass
-import os
 from pathlib import Path
-from typing import Optional
 from typing_extensions import Annotated
 import secrets
 
@@ -92,9 +89,7 @@ def encrypt(
 
 @app.command()
 def decrypt(
-    password: Annotated[
-        str, typer.Option(prompt=True, hide_input=True)
-    ],
+    password: Annotated[str, typer.Option(prompt=True, hide_input=True)],
     from_file: Annotated[
         Path,
         typer.Option(
@@ -152,13 +147,13 @@ def decrypt(
         else:
             pyperclip.copy(decrypted_data)
             typer.echo("✅ Recovery codes decrypted and copied to clipboard!")
-        
+
         typer.echo(f"📋 {len(decrypted_data)} characters restored")
 
     except typer.Exit:
         raise
-    except Exception as e:
-        typer.echo(f"❌ Decryption failed!", err=True)
+    except Exception:
+        typer.echo("❌ Decryption failed!", err=True)
         raise typer.Exit(1)
 
 
