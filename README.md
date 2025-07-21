@@ -2,12 +2,13 @@
 
 A simple, secure command-line tool for encrypting and decrypting recovery codes using password-based encryption.
 
-### Prerequisites
+## Prerequisites
 
 - Python 3.13 or higher
 - [uv](https://docs.astral.sh/uv/) package manager
 
-### Install
+## Install
+
 ```bash
 git clone [...]
 cd pyrecover
@@ -16,7 +17,7 @@ uv sync
 
 ## Usage
 
-### Basic Workflow
+## Basic Workflow
 
 1. **Encrypt recovery codes:**
 
@@ -29,13 +30,14 @@ uv sync
    - Enter and confirm your password when prompted
    - Encrypted data is automatically copied back to clipboard
 
-3. **Decrypt recovery codes:**
+2. **Decrypt recovery codes:**
+
+   - Copy encrypted data to clipboard first
 
    ```bash
    uv run pyrecover decrypt
    ```
 
-   - Copy encrypted data to clipboard first
    - Enter your password when prompted
    - Original recovery codes are copied back to clipboard
 
