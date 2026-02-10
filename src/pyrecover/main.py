@@ -1,10 +1,10 @@
 import base64
-from pathlib import Path
-from typing_extensions import Annotated
 import secrets
+from pathlib import Path
+from typing import Annotated
 
-import rich
 import pyperclip
+import rich
 import typer
 from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes
@@ -26,8 +26,7 @@ def derive_key(password: str, salt: bytes) -> bytes:
         salt=salt,
         iterations=PBKDF2_ITERATIONS,
     )
-    key = base64.urlsafe_b64encode(kdf.derive(password.encode()))
-    return key
+    return base64.urlsafe_b64encode(kdf.derive(password.encode()))
 
 
 @app.command()
@@ -36,11 +35,11 @@ def encrypt(
         str, typer.Option(prompt=True, confirmation_prompt=True, hide_input=True)
     ],
     from_file: Annotated[
-        Path,
+        Path | None,
         typer.Option("--from", "-f", help="Read data from file instead of clipboard"),
     ] = None,
     save_to_file: Annotated[
-        Path,
+        Path | None,
         typer.Option(
             "--save", "-s", help="Save encrypted data to file instead of clipboard"
         ),
@@ -82,22 +81,24 @@ def encrypt(
             pyperclip.copy(final_data)
             typer.echo("✅ Encrypted data copied to clipboard!")
 
+    except typer.Exit:
+        raise
     except Exception as e:
-        typer.echo(f"❌ Encryption failed: {str(e)}", err=True)
-        raise typer.Exit(1)
+        typer.echo(f"❌ Encryption failed: {e!s}", err=True)
+        raise typer.Exit(1) from e
 
 
 @app.command()
 def decrypt(
     password: Annotated[str, typer.Option(prompt=True, hide_input=True)],
     from_file: Annotated[
-        Path,
+        Path | None,
         typer.Option(
             "--from", "-f", help="Read encrypted data from file instead of clipboard"
         ),
     ] = None,
     save_to_file: Annotated[
-        Path,
+        Path | None,
         typer.Option(
             "--save", "-s", help="Save decrypted data to file instead of clipboard"
         ),
@@ -123,22 +124,23 @@ def decrypt(
         try:
             combined_data = base64.b64decode(encrypted_data_b64)
             if len(combined_data) < SALT_SIZE:
-                raise ValueError("Data too short")
+                msg = "Data too short"
+                raise ValueError(msg)
             salt = combined_data[:SALT_SIZE]
             encrypted_data = combined_data[SALT_SIZE:]
-        except Exception:
+        except Exception as e:
             typer.echo("❌ Decryption failed!", err=True)
-            raise typer.Exit(1)
+            raise typer.Exit(1) from e
 
         key = derive_key(password, salt)
         fernet = Fernet(key)
 
         try:
             decrypted_data = fernet.decrypt(encrypted_data).decode()
-        except Exception:
+        except Exception as e:
             # Generic error message to prevent information leakage
             typer.echo("❌ Decryption failed!", err=True)
-            raise typer.Exit(1)
+            raise typer.Exit(1) from e
 
         # Save or copy to clipboard
         if save_to_file:
@@ -152,9 +154,9 @@ def decrypt(
 
     except typer.Exit:
         raise
-    except Exception:
+    except Exception as e:
         typer.echo("❌ Decryption failed!", err=True)
-        raise typer.Exit(1)
+        raise typer.Exit(1) from e
 
 
 if __name__ == "__main__":

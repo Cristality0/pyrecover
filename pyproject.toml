@@ -3,15 +3,9 @@ name = "pyrecover"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-authors = [
-    { name = "jovaras.z", email = "jovaras.z@8devices.com" }
-]
+authors = [{ name = "jovaras.z", email = "jovaras.z@8devices.com" }]
 requires-python = ">=3.13"
-dependencies = [
-    "cryptography>=45.0.5",
-    "pyperclip>=1.9.0",
-    "typer>=0.16.0",
-]
+dependencies = ["cryptography>=45.0.5", "pyperclip>=1.9.0", "typer>=0.16.0"]
 
 [project.scripts]
 pyrecover = "pyrecover.main:app"
@@ -23,4 +17,122 @@ build-backend = "hatchling.build"
 [dependency-groups]
 dev = [
     "ruff>=0.12.4",
+    "pytest>=8.0",
+    "pytest-cov>=6.0",
+    "ty>=0.0.15",
 ]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 88
+
+[tool.ruff.lint]
+select = [
+    # Core Python
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "YTT",  # flake8-2020 (sys.version checks)
+    "FA",   # flake8-future-annotations
+
+    # Bug prevention
+    "B",    # flake8-bugbear
+    "BLE",  # flake8-blind-except
+    "FBT",  # flake8-boolean-trap
+    "ISC",  # flake8-implicit-str-concat
+    "PIE",  # flake8-pie
+    "RSE",  # flake8-raise
+    "RET",  # flake8-return
+    "SLF",  # flake8-self (private member access)
+    "SLOT", # flake8-slots
+
+    # Security
+    "S",    # flake8-bandit
+
+    # Code quality
+    "A",    # flake8-builtins
+    "C4",   # flake8-comprehensions
+    "C90",  # mccabe complexity
+    "EM",   # flake8-errmsg
+    "SIM",  # flake8-simplify
+    "TRY",  # tryceratops (exception handling)
+    "FLY",  # flynt (f-strings)
+    "PERF", # perflint (performance)
+    "FURB", # refurb (modernization)
+
+    # Imports
+    "ICN",  # flake8-import-conventions
+    "TID",  # flake8-tidy-imports
+    "TC",   # flake8-type-checking
+
+    # Style
+    "COM",  # flake8-commas (trailing commas)
+    "Q",    # flake8-quotes
+    "ERA",  # eradicate (commented-out code)
+
+    # Cleanliness
+    "T10",  # flake8-debugger (no breakpoints)
+    "T20",  # flake8-print (no raw print())
+    "EXE",  # flake8-executable
+    "ARG",  # flake8-unused-arguments
+    "PTH",  # flake8-use-pathlib
+    "LOG",  # flake8-logging
+
+    # Testing
+    "PT",   # flake8-pytest-style
+
+    # Documentation
+    "D",    # pydocstyle
+
+    # Pylint subset
+    "PLC",  # pylint convention
+    "PLE",  # pylint error
+    "PLR",  # pylint refactor
+    "PLW",  # pylint warning
+
+    # Meta
+    "PGH",  # pygrep-hooks
+    "RUF",  # ruff-specific rules
+]
+ignore = [
+    "S311",   # allow pseudo-random generators (not used for crypto)
+    "D100",   # missing docstring in public module
+    "D104",   # missing docstring in public package
+    "D203",   # no-blank-line-before-class (conflicts with D211)
+    "D213",   # multi-line-summary-second-line (conflicts with D212)
+    "COM812", # missing trailing comma (conflicts with ruff formatter)
+    "ISC001", # single-line implicit string concat (conflicts with ruff formatter)
+    "TRY003", # long exception messages (too strict for CLI apps)
+    "FBT002", # boolean default positional arg (required by Typer CLI options)
+    "TRY301", # abstract raise to inner function (not useful for typer.Exit flow)
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.pylint]
+max-args = 6
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**/*.py" = [
+    "S101",    # allow assert in tests
+    "S106",    # allow hardcoded passwords in tests
+    "D102",    # missing docstring in public method (test names are descriptive)
+    "D103",    # missing docstring in public function (test names are descriptive)
+    "ARG001",  # unused function argument (fixtures)
+    "PLR2004", # magic values in comparisons
+    "FBT001",  # boolean positional arg (test parametrize)
+]
+"src/**/*.py" = [
+    "ARG001",  # unused function argument (Typer CLI options must be params)
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
