@@ -103,9 +103,6 @@ def decrypt(
             "--save", "-s", help="Save decrypted data to file instead of clipboard"
         ),
     ] = None,
-    hide_input: Annotated[
-        bool, typer.Option("--hide-input", "-hi", help="Hide input password")
-    ] = False,
 ):
     """Decrypt recovery codes and copy to clipboard."""
     try:

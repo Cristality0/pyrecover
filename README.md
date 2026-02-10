@@ -41,3 +41,6 @@ uv sync
    - Enter your password when prompted
    - Original recovery codes are copied back to clipboard
 
+## Development
+
+Find relevant commands in 'justfile' and run them with `just <command>`.
